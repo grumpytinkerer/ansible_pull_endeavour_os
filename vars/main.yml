@@ -1,0 +1,109 @@
+---
+
+user_name: "grumpy"
+user_group: "grumpy"
+
+basic_packages:
+  - xorg-server
+  - xorg-apps
+  - xorg-xinit
+  - which
+  - cronie
+  - networkmanager
+  - lightdm
+  - lightdm-slick-greeter
+  - lxappearance-gtk3
+  - picom
+  - qt5ct
+  - xcb-util-cursor
+  - feh
+  - dunst
+  - flameshot
+  - btop
+  - neofetch
+  - qtile
+  - xterm
+  - firefox
+  - alacritty
+  - pcmanfm-gtk3
+  - gvfs
+  - gvfs-smb
+  - gvfs-mtp
+  - gvfs-gphoto2
+  - ntfs-3g
+  - udiskie
+  - engrampa
+  - p7zip
+  - unrar
+  - unzip
+  - bash-completion
+  - keychain
+  - psutils
+  - ibus
+  - ibus-typing-booster
+  - libfido2
+  - lsof
+  - python-pip
+  - pacman-contrib
+  - rofi
+  - noto-fonts
+  - noto-fonts-emoji
+  - ttf-linux-libertine
+  - flatpak
+  - inotify-tools
+  - dust
+  - numlockx
+  - network-manager-applet
+  - trash-cli
+  - bat
+  - tldr
+  - exa
+  - pipewire
+  - pipewire-audio
+  - pipewire-alsa
+  - pipewire-pulse
+  - pipewire-jack
+  - wireplumber
+  - helvum
+  - pavucontrol
+  - handbrake
+  - gprename
+  - bitwarden
+  - docker
+  - docker-compose
+  - unarchiver
+  - tmux
+  - foliate
+  - yamllint
+  - molecule
+  - gnome-keyring
+  - seahorse
+  - tigervnc
+  - lf
+
+nvidia_packages:
+  - nvidia-dkms
+  - nvidia-utils
+  - lib32-nvidia-utils
+  - nvidia-settings
+  - vulkan-icd-loader
+  - lib32-vulkan-icd-loader
+
+aur_packages:
+  # - i3lock-color
+  # - python-pulsectl
+  # - turbo-base64
+  - betterlockscreen
+  - timeshift
+  - polkit-gnome
+  - volctl
+  - rofi-greenclip
+  - tmux-plugin-manager
+  - ibus-daemon
+  - ueberzugpp
+  # - snapd
+  # - snapd-glib
+  - libpamac-full
+  - pamac-cli
+  - pamac-all
+  - visual-studio-code-bin

@@ -1,0 +1,9 @@
+---
+
+- name: Add polkit-gnome-authentication-agent to autostart.sh
+  ansible.builtin.lineinfile:
+    path: /home/"{{ user_name }}"/.config/qtile/autostart.sh
+    line: "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &"
+    mode: '0755'
+    state: present
+    create: true

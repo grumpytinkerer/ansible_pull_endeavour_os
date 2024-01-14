@@ -1,0 +1,19 @@
+---
+
+- name: Setup EndeavourOS
+  hosts: localhost
+  connection: local
+  become: true
+
+  pre_tasks:
+    - name: Update pacman database
+      community.general.pacman:
+        update_cache: true
+      changed_when: false
+
+  tasks:
+    - name: Install packages
+      ansible.builtin.import_tasks: tasks/packages.yml
+
+    - name: Setup polkit
+      ansible.builtin.import_tasks: tasks/polkit.yml

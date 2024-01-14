@@ -1,0 +1,14 @@
+---
+
+- name: Create the betterlockscreen config directory
+  ansible.builtin.file:
+    path: ~/.config/betterlockscreen/
+    state: directory
+    mode: '0770'
+
+- name: Copy the betterlockscreen config file
+  ansible.builtin.copy:
+    src: /usr/share/doc/betterlockscreen/examples/betterlockscreenrc
+    dest: ~/.config/betterlockscreen/betterlockscreenrc
+    mode: '0770'
+

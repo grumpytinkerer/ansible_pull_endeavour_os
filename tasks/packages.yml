@@ -1,0 +1,127 @@
+---
+
+- name: Include all .yaml files in the vars directory
+  ansible.builtin.include_vars:
+    dir: ../vars
+    extensions:
+      - 'yml'
+
+- name: Install basic packages
+  community.general.pacman:
+    name: "{{ basic_packages }}"
+    state: present
+
+# TEMP: NEXT TWO STEPS ARE TO BE REMOVED AFTER TESTING
+- name: Stop and disable the firewalld service
+  ansible.builtin.service:
+    name: firewalld
+    state: stopped
+    enabled: false
+
+- name: Start and enable the sshd service
+  ansible.builtin.service:
+    name: sshd
+    state: started
+    enabled: true
+
+# TEMP: END OF SECTION TO BE REMOVED AFTER TESTING
+
+- name: Enable the NetworkManager service
+  ansible.builtin.service:
+    name: NetworkManager
+    state: started
+    enabled: true
+
+- name: Get GPU information
+  ansible.builtin.shell: "set -o pipefail && lspci | grep -i vga | awk '{print $5}'"
+  register: gpu_info
+  changed_when: false
+  check_mode: false
+
+- name: Print GPU information
+  ansible.builtin.debug:
+    msg: "{{ gpu_info.stdout }}"
+
+- name: Install nvidia drivers
+  community.general.pacman:
+    name: "{{ nvidia_packages }}"
+    state: present
+  when: gpu_info.stdout == "NVIDIA"
+
+- name: Create /etc/lightdm/lightdm.conf.d/ directories if they don't exist
+  ansible.builtin.file:
+    path: /etc/lightdm/lightdm.conf.d/
+    state: directory
+    mode: '0644'
+
+- name: Copy the file 10-eos-slick.conf
+  ansible.builtin.copy:
+    src: 10-eos-slick.conf
+    dest: /etc/lightdm/lightdm.conf.d/10-eos-slick.conf
+    mode: '0644'
+
+- name: Enable the lightdm service
+  ansible.builtin.service:
+    name: lightdm
+    enabled: true
+
+- name: Change makepkg.conf
+  ansible.builtin.lineinfile:
+    path: /etc/makepkg.conf
+    regexp: '^MAKEFLAGS='
+    line: 'MAKEFLAGS="-j$(nproc)"'
+    state: present
+    backup: true
+
+- name: Create ~/.ansible/plugins/modules directories if they don't exist
+  ansible.builtin.file:
+    path: ~/.ansible/plugins/modules
+    state: directory
+    mode: '0770'
+
+- name: Download ansible-aur
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/kewlfft/ansible-aur/master/plugins/modules/aur.py
+    dest: ~/.ansible/plugins/modules/aur.py
+    mode: '0770'
+
+- name: Create the `aur_builder` user
+  ansible.builtin.user:
+    name: aur_builder
+    create_home: true
+    group: wheel
+
+- name: Allow the `aur_builder` user to run `sudo pacman` without a password
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/11-install-aur_builder
+    line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+    create: true
+    mode: "0644"
+    validate: 'visudo -cf %s'
+
+- name: Install AUR packages
+  aur:
+    name: "{{ aur_packages }}"
+    use: yay
+    state: present
+    update_cache: true
+  become: true
+  become_user: aur_builder
+
+- name: Remove the file /etc/sudoers.d/11-install-aur_builder
+  ansible.builtin.file:
+    path: /etc/sudoers.d/11-install-aur_builder
+    state: absent
+
+- name: Remove the `aur_builder` user and its home directory
+  ansible.builtin.user:
+    name: aur_builder
+    state: absent
+    remove: true
+    force: true
+
+- name: Enable the cronie service
+  ansible.builtin.service:
+    name: cronie
+    state: started
+    enabled: true
